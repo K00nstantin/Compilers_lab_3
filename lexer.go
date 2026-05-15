@@ -1,5 +1,9 @@
 package main
 
+import (
+	"fmt"
+)
+
 type Lexer struct {
 	input string
 	pos   int
@@ -172,4 +176,19 @@ func (l *Lexer) NextToken() Token {
 		}
 	}
 	return t
+}
+
+func (l *Lexer) Tokenize() ([]Token, error) {
+	var tokens []Token
+	for {
+		t := l.NextToken()
+		tokens = append(tokens, t)
+		if t.Type == T_EOF {
+			break
+		}
+		if t.Type == T_ILLEGAL {
+			return tokens, fmt.Errorf("illegal character '%s' at %d:%d", t.Value, t.Line, t.Col)
+		}
+	}
+	return tokens, nil
 }
